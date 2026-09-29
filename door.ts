@@ -1,10 +1,10 @@
 export class Door {
     isLocked: boolean;
-    key: string;
+    padlock: string;
 
-    constructor(isLocked: boolean, key: string) {
+    constructor(isLocked: boolean, padlock: string) {
         this.isLocked = isLocked;
-        this.key = key;
+        this.padlock = padlock;
     }
 
     getThroughDoor(door: Door): boolean {
@@ -22,7 +22,7 @@ export class Player {
     }
 
     openDoor(door: Door): boolean {
-        const hasKey = this.keys.includes(door.key);
+        const hasKey = this.keys.includes(door.padlock);
 
         if (hasKey) {
             door.isLocked = false;
