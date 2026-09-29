@@ -31,3 +31,16 @@ describe("Door", () => {
     });
 
 });
+
+describe("Door", () => {
+    it("Ouvrir la porte consomme la clé", () => {
+        const door = new Door(true, "red-key");
+        const player = new Player(["red-key", "torch"]);
+        player.openDoor(door);
+
+        expect(door.getThroughDoor).toBeTruthy;
+        expect(player.inventory).not.toContain("red-key");
+        expect(player.inventory).toContain("torch");
+    });
+
+});

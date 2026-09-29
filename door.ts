@@ -15,19 +15,23 @@ export class Door {
 
 export class Player {
 
-    keys: string[]
+    inventory: string[]
 
-    constructor(keys: string[]) {
-        this.keys = keys;
+    constructor(inventory: string[]) {
+        this.inventory = inventory;
     }
 
     openDoor(door: Door): boolean {
-        const hasKey = this.keys.includes(door.padlock);
+        const hasKey = this.inventory.indexOf(door.padlock);
 
-        if (hasKey) {
+        if (hasKey !== -1) {
             door.isLocked = false;
+            this.inventory.splice(hasKey, 1);
             return true;
         }
         return false;
     }
+
+
+
 }
