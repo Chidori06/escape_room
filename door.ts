@@ -1,10 +1,10 @@
 export class Door {
     isLocked: boolean;
-    padlock: string;
+    padlock?: string;
 
-    constructor(isLocked: boolean, padlock: string) {
+    constructor(isLocked: boolean, padlock?: string) {
         this.isLocked = isLocked;
-        this.padlock = padlock;
+        padlock && (this.padlock = padlock);
     }
 
     getThroughDoor(door: Door): boolean {
@@ -22,13 +22,18 @@ export class Player {
     }
 
     openDoor(door: Door): boolean {
-        const hasKey = this.inventory.indexOf(door.padlock);
-
-        if (hasKey !== -1) {
+        if (!door.padlock) {
             door.isLocked = false;
-            this.inventory.splice(hasKey, 1);
             return true;
         }
+
+        const keyIndex = this.inventory.indexOf(door.padlock);
+        if (keyIndex !== -1) {
+            door.isLocked = false;
+            this.inventory.splice(keyIndex, 1);
+            return true;
+        }
+
         return false;
     }
 
