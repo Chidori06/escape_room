@@ -32,6 +32,23 @@ export class Player {
         return false;
     }
 
+    getItems(room: Room, item: string): boolean {
+        const roomItems = room.items.indexOf(item);
 
+        if (roomItems !== -1) {
+            this.inventory.push(item);
+            room.items.splice(roomItems, 1);
+            return true;
+        }
+        return false;
+    }
 
+}
+
+export class Room {
+    items: string[];
+
+    constructor(items: string[]) {
+        this.items = items;
+    }
 }
