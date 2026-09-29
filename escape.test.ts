@@ -10,3 +10,13 @@ describe("Door", () => {
     });
 
 });
+
+describe("Door", () => {
+    it("Une porte ouverte peut être franchie", () => {
+        const door = new Door(false);
+        const result = door.getThroughDoor;
+
+        expect(result).toBeFalsy;
+    });
+
+});

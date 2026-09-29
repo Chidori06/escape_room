@@ -6,10 +6,11 @@ export class Door {
     }
 
     getThroughDoor(door: Door): boolean {
-        if (this.isLocked) {
-            return true;
-        }
-        return false;
+        // if (this.isLocked) {
+        //     return true;
+        // }
+        // return false;
+        return this.isLocked ? true : false;
     }
 
 }
