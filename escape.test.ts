@@ -57,3 +57,19 @@ describe("Player", () => {
     });
 
 });
+
+describe("Player", () => {
+    it("Un objet déjà ramassé ne peut pas l'être deux fois", () => {
+        const room = new Room(["torch"]);
+        const player = new Player([]);
+        const firstItem = player.getItems(room, "torch");
+        const secondItem = player.getItems(room, "torch");
+
+        expect(firstItem).toBe(true);
+        expect(secondItem).toBe(false);
+
+        expect(room.items).toEqual([]);
+        expect(player.inventory).toEqual(["torch"]);
+    });
+
+});
