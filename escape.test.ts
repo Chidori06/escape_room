@@ -27,7 +27,7 @@ describe("Door", () => {
         const player = new Player(["red-key"]);
         player.openDoor(door);
 
-        expect(door.getThroughDoor).toBeTruthy;
+        expect(door.getThroughDoor).toBeTruthy();
     });
 
 });
@@ -72,4 +72,22 @@ describe("Player", () => {
         expect(player.inventory).toEqual(["torch"]);
     });
 
+});
+
+describe("Player", () => {
+    it("Un joueur peut utiliser un objet qu'il possède", () => {
+        const player = new Player(["torch"]);
+
+        const result = player.useItem("torch");
+
+        expect(result).toBeTruthy();
+    });
+
+    it("Un joueur ne peut pas utiliser un objet qu'il ne possède pas", () => {
+        const player = new Player(["torch"]);
+
+        const result = player.useItem("red-key");
+
+        expect(result).toBeFalsy();
+    });
 });

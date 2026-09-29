@@ -48,6 +48,11 @@ export class Player {
         return false;
     }
 
+    useItem(item: string): boolean {
+        return this.inventory.includes(item);
+    }
+
+
 }
 
 export class Room {
