@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { Door, Player, Riddle, Room } from "./door";
+import { Door, Enigma, Player, Riddle, Room } from "./door";
 
 describe("Door", () => {
     it("Une porte fermée ne peut pas être franchie", () => {
@@ -94,7 +94,7 @@ describe("Player", () => {
 describe("Player", () => {
     it("Un joueur donne la bonne réponse à l'énigme", () => {
         const player = new Player([], ["yes"]);
-        const riddle = new Riddle([{ question: "Es-tu là ?", response: "yes" }])
+        const riddle = new Enigma([{ question: "Es-tu là ?", response: "yes" }])
 
         const result = player.giveAnswer(riddle.riddles[0], player.keywords[0]);
 
@@ -104,11 +104,64 @@ describe("Player", () => {
 
     it("Un joueur donne la mauvaise réponse à l'énigme", () => {
         const player = new Player([], ["no"]);
-        const riddle = new Riddle([{ question: "Es-tu là ?", response: "yes" }])
+        const riddle = new Enigma([{ question: "Es-tu là ?", response: "yes" }])
 
         const result = player.giveAnswer(riddle.riddles[0], player.keywords[0]);
 
 
         expect(result).toBe(false);
+    });
+});
+
+describe("Door", () => {
+    it("Franchir la porte avec énigme résolue", () => {
+        const player = new Player([], ["yes"]);
+        const riddle = new Enigma([{ question: "Es-tu là ?", response: "yes" }])
+        const door = new Door(true);
+
+        player.giveAnswer(riddle.riddles[0], player.keywords[0]);
+        player.openDoor(door);
+
+        expect(door.getThroughDoor).toBeTruthy;
+    });
+
+    it("Franchir la porte avec énigme non résolue", () => {
+        const player = new Player([], ["no"]);
+        const riddle = new Enigma([{ question: "Es-tu là ?", response: "yes" }])
+        const door = new Door(true);
+
+        player.giveAnswer(riddle.riddles[0], player.keywords[0]);
+        player.openDoor(door);
+
+        expect(door.getThroughDoor(door)).toBe(false);
+    });
+});
+
+describe("Door", () => {
+    it("Essayer de résoudre l'énigme deux fois", () => {
+        const player = new Player([], ["no", "yes"]);
+        const riddle = new Enigma([{ question: "Es-tu là ?", response: "yes" }])
+        const door = new Door(true);
+
+        player.giveAnswer(riddle.riddles[0], player.keywords[0]);
+        player.openDoor(door);
+        player.giveAnswer(riddle.riddles[0], player.keywords[1]);
+        player.openDoor(door);
+        expect(door.getThroughDoor(door)).toBeTruthy;
+    });
+
+    it("Essayer de résoudre l'énigme trois fois donc conséquence", () => {
+        const player = new Player([], ["no", "peut-être", "pas sûr"]);
+        const riddle = new Enigma([{ question: "Es-tu là ?", response: "yes" }])
+        const door = new Door(true);
+
+        player.giveAnswer(riddle.riddles[0], player.keywords[0]);
+        player.openDoor(door);
+        player.giveAnswer(riddle.riddles[0], player.keywords[1]);
+        player.openDoor(door);
+        player.giveAnswer(riddle.riddles[0], player.keywords[3]);
+        player.openDoor(door);
+
+        expect(door.getThroughDoor(door)).toBe(false);
     });
 });

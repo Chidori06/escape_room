@@ -1,12 +1,11 @@
 export class Door {
     isLocked: boolean;
     padlock?: string;
-    riddle?: Riddle[];
 
-    constructor(isLocked: boolean, padlock?: string, riddle?: Riddle[]) {
+
+    constructor(isLocked: boolean, padlock?: string) {
         this.isLocked = isLocked;
         padlock && (this.padlock = padlock);
-        riddle && (this.riddle = []);
     }
 
     getThroughDoor(door: Door): boolean {
@@ -16,22 +15,18 @@ export class Door {
 }
 
 export class Player {
-
     inventory: string[];
     keywords: string[];
+    curse: string[];
 
-    constructor(inventory: string[], keywords: string[] = []) {
+    constructor(inventory: string[], keywords: string[] = [], curse: string[] = []) {
         this.inventory = inventory;
         this.keywords = keywords;
+        this.curse = curse;
     }
 
     openDoor(door: Door): boolean {
         if (!door.padlock) {
-            door.isLocked = false;
-            return true;
-        }
-
-        if (!door.riddle) {
             door.isLocked = false;
             return true;
         }
@@ -62,14 +57,23 @@ export class Player {
     }
 
     giveAnswer(riddle: IRiddle, playerAnswer: string): boolean {
+
         if (riddle.response === playerAnswer) {
+            this.openDoor;
             return true;
         }
+
         return false;
-
-
     }
 
+    getCursed() {
+        let tries = 0;
+        let maxTries = 3;
+
+        if (this.giveAnswer) {
+
+        }
+    }
 }
 
 export class Room {
@@ -79,8 +83,10 @@ export class Room {
         this.items = items;
     }
 }
+
 interface IRiddle { question: string, response: string }
-export class Riddle {
+
+export class Enigma {
     riddles: IRiddle[];
 
     constructor(riddles: IRiddle[] = []) {
