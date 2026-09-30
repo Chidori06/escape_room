@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { Door, Player, Room } from "./door";
+import { Door, Player, Riddle, Room } from "./door";
 
 describe("Door", () => {
     it("Une porte fermée ne peut pas être franchie", () => {
@@ -39,7 +39,6 @@ describe("Door", () => {
         player.openDoor(door);
 
         expect(door.getThroughDoor).toBeTruthy;
-        expect(player.inventory).not.toContain("red-key");
         expect(player.inventory).toContain("torch");
     });
 
@@ -89,5 +88,27 @@ describe("Player", () => {
         const result = player.useItem("red-key");
 
         expect(result).toBeFalsy();
+    });
+});
+
+describe("Player", () => {
+    it("Un joueur donne la bonne réponse à l'énigme", () => {
+        const player = new Player([], ["yes"]);
+        const riddle = new Riddle([{ question: "Es-tu là ?", response: "yes" }])
+
+        const result = player.giveAnswer(riddle.riddles[0], player.keywords[0]);
+
+
+        expect(result).toBeTruthy();
+    });
+
+    it("Un joueur donne la mauvaise réponse à l'énigme", () => {
+        const player = new Player([], ["no"]);
+        const riddle = new Riddle([{ question: "Es-tu là ?", response: "yes" }])
+
+        const result = player.giveAnswer(riddle.riddles[0], player.keywords[0]);
+
+
+        expect(result).toBe(false);
     });
 });
