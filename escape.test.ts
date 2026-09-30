@@ -163,6 +163,31 @@ describe("Door", () => {
         player.openDoor(door);
 
         expect(door.getThroughDoor(door)).toBe(false);
-        //expect(player.curse).toContain(["maudit"]);
+        expect(player.curse).toEqual(["maudit"]);
+
+
     });
 });
+
+describe("Door", () => {
+    it("Essayer de passer une porte sans alarme active", () => {
+        const alarm = new Alarm();
+        alarm.desactive;
+        const door = new Door(true);
+        const player = new Player([], []);
+        player.openDoor(door);
+
+        expect(door.getThroughDoor(door)).toBeTruthy();
+    });
+
+    it("Essayer de passer une porte avec une alarme", () => {
+        const alarm = new Alarm();
+        alarm.active;
+        const door = new Door(true);
+        const player = new Player([], []);
+        player.openDoor(door);
+
+        expect(door.getThroughDoor(door)).toBe(false);
+    });
+});
+

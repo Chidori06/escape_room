@@ -3,7 +3,7 @@ export class Door {
     padlock?: string;
 
 
-    constructor(isLocked: boolean, padlock?: string) {
+    constructor(isLocked: boolean, padlock?: string,) {
         this.isLocked = isLocked;
         padlock && (this.padlock = padlock);
     }
@@ -17,6 +17,7 @@ export class Door {
 export class Player {
     inventory: string[];
     keywords: string[];
+    failure: number;
     curse: string[];
 
 
@@ -24,6 +25,7 @@ export class Player {
         this.inventory = inventory;
         this.keywords = keywords;
         this.curse = curse;
+        this.failure = 0;
     }
 
     openDoor(door: Door): boolean {
@@ -59,18 +61,16 @@ export class Player {
 
 
     giveAnswer(riddle: IRiddle, playerAnswer: string): boolean {
-        let failure = 0;
+
         if (riddle.response === playerAnswer) {
-            failure = 0;
             this.openDoor;
             return true;
         }
-        failure++;
 
-        if (failure >= 3) {
+        this.failure++;
 
+        if (this.failure >= 3) {
             this.curse.push("maudit");
-
             return false;
         }
 
@@ -95,3 +95,4 @@ export class Enigma {
         this.riddles = riddles;
     }
 }
+
