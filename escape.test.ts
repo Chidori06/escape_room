@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { Door, Enigma, Player, Riddle, Room } from "./door";
+import { Door, Enigma, Player, Room } from "./door";
 
 describe("Door", () => {
     it("Une porte fermée ne peut pas être franchie", () => {
@@ -151,7 +151,7 @@ describe("Door", () => {
     });
 
     it("Essayer de résoudre l'énigme trois fois donc conséquence", () => {
-        const player = new Player([], ["no", "peut-être", "pas sûr"]);
+        const player = new Player([], ["no", "peut-être", "pas sûr"], []);
         const riddle = new Enigma([{ question: "Es-tu là ?", response: "yes" }])
         const door = new Door(true);
 
@@ -163,5 +163,6 @@ describe("Door", () => {
         player.openDoor(door);
 
         expect(door.getThroughDoor(door)).toBe(false);
+        //expect(player.curse).toContain(["maudit"]);
     });
 });

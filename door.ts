@@ -19,6 +19,7 @@ export class Player {
     keywords: string[];
     curse: string[];
 
+
     constructor(inventory: string[], keywords: string[] = [], curse: string[] = []) {
         this.inventory = inventory;
         this.keywords = keywords;
@@ -56,23 +57,24 @@ export class Player {
         return this.inventory.includes(item);
     }
 
-    giveAnswer(riddle: IRiddle, playerAnswer: string): boolean {
 
+    giveAnswer(riddle: IRiddle, playerAnswer: string): boolean {
+        let failure = 0;
         if (riddle.response === playerAnswer) {
+            failure = 0;
             this.openDoor;
             return true;
         }
+        failure++;
+
+        if (failure >= 3) {
+
+            this.curse.push("maudit");
+
+            return false;
+        }
 
         return false;
-    }
-
-    getCursed() {
-        let tries = 0;
-        let maxTries = 3;
-
-        if (this.giveAnswer) {
-
-        }
     }
 }
 
