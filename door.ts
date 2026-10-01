@@ -1,15 +1,32 @@
 export class Door {
     isLocked: boolean;
     padlock?: string;
+    alarmProtected?: boolean = false;
+    alarm?: Alarm;
+    riddleDoor?: boolean;
 
 
-    constructor(isLocked: boolean, padlock?: string,) {
+    constructor(isLocked: boolean, padlock?: string, riddleDoor?: boolean, alarmProtected?: boolean,) {
         this.isLocked = isLocked;
         padlock && (this.padlock = padlock);
+        alarmProtected && (this.alarmProtected = alarmProtected);
+        this.riddleDoor = riddleDoor;
+
     }
 
-    getThroughDoor(door: Door): boolean {
-        return this.isLocked ? true : false;
+    setAlarm(alarm: Alarm): void {
+        this.alarm = alarm;
+    }
+
+    getThroughDoor(): boolean {
+        if (this.isLocked) {
+            return false;
+        }
+        if (this.alarmProtected && this.alarm?.isOn) {
+            return false;
+        }
+
+        return true;
     }
 
 }
@@ -17,6 +34,7 @@ export class Door {
 export class Player {
     inventory: string[];
     keywords: string[];
+    riddleSolved: boolean;
     failure: number;
     curse: string[];
 
@@ -25,23 +43,28 @@ export class Player {
         this.inventory = inventory;
         this.keywords = keywords;
         this.curse = curse;
+        this.riddleSolved = false;
         this.failure = 0;
     }
 
     openDoor(door: Door): boolean {
-        if (!door.padlock) {
-            door.isLocked = false;
-            return true;
+        if (door.riddleDoor && !this.riddleSolved) {
+            return false;
         }
 
-        const keyIndex = this.inventory.indexOf(door.padlock);
-        if (keyIndex !== -1) {
-            door.isLocked = false;
+        if (door.padlock) {
+            const keyIndex = this.inventory.indexOf(door.padlock);
+
+            if (keyIndex === -1) {
+                return false;
+            }
+
             this.inventory.splice(keyIndex, 1);
-            return true;
         }
 
-        return false;
+        door.isLocked = false;
+        return true;
+
     }
 
     getItems(room: Room, item: string): boolean {
@@ -63,7 +86,7 @@ export class Player {
     giveAnswer(riddle: IRiddle, playerAnswer: string): boolean {
 
         if (riddle.response === playerAnswer) {
-            this.openDoor;
+            this.riddleSolved = true;
             return true;
         }
 
@@ -96,3 +119,18 @@ export class Enigma {
     }
 }
 
+export class Alarm {
+    isOn: boolean;
+
+    constructor() {
+        this.isOn = false;
+    }
+
+    activate(): void {
+        this.isOn = true;
+    }
+
+    desactivate(): void {
+        this.isOn = false;
+    }
+}

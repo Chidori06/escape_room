@@ -1,12 +1,12 @@
 import { describe, expect, it } from "vitest";
-import { Door, Enigma, Player, Room } from "./door";
+import { Alarm, Door, Enigma, Player, Room } from "./door";
 
 describe("Door", () => {
     it("Une porte fermée ne peut pas être franchie", () => {
         const door = new Door(true);
-        const result = door.getThroughDoor;
+        const result = door.getThroughDoor();
 
-        expect(result).toBeTruthy;
+        expect(result).toBe(false);
     });
 
 });
@@ -14,9 +14,9 @@ describe("Door", () => {
 describe("Door", () => {
     it("Une porte ouverte peut être franchie", () => {
         const door = new Door(false);
-        const result = door.getThroughDoor;
+        const result = door.getThroughDoor();
 
-        expect(result).toBeFalsy;
+        expect(result).toBe(true);
     });
 
 });
@@ -27,7 +27,7 @@ describe("Door", () => {
         const player = new Player(["red-key"]);
         player.openDoor(door);
 
-        expect(door.getThroughDoor).toBeTruthy();
+        expect(door.getThroughDoor()).toBeTruthy();
     });
 
 });
@@ -38,7 +38,7 @@ describe("Door", () => {
         const player = new Player(["red-key", "torch"]);
         player.openDoor(door);
 
-        expect(door.getThroughDoor).toBeTruthy;
+        expect(door.getThroughDoor()).toBeTruthy;
         expect(player.inventory).toContain("torch");
     });
 
@@ -50,7 +50,7 @@ describe("Player", () => {
         const player = new Player([]);
         player.getItems(room, "torch");
 
-        expect(player.getItems).toBeTruthy;
+        expect(player.getItems).toBeTruthy();
         expect(room.items).not.toContain("torch");
         expect(player.inventory).toContain("torch");
     });
@@ -87,7 +87,7 @@ describe("Player", () => {
 
         const result = player.useItem("red-key");
 
-        expect(result).toBeFalsy();
+        expect(result).toBe(false);
     });
 });
 
@@ -117,23 +117,23 @@ describe("Door", () => {
     it("Franchir la porte avec énigme résolue", () => {
         const player = new Player([], ["yes"]);
         const riddle = new Enigma([{ question: "Es-tu là ?", response: "yes" }])
-        const door = new Door(true);
+        const door = new Door(true, undefined, true, false);
 
         player.giveAnswer(riddle.riddles[0], player.keywords[0]);
         player.openDoor(door);
 
-        expect(door.getThroughDoor).toBeTruthy;
+        expect(door.getThroughDoor()).toBeTruthy();
     });
 
     it("Franchir la porte avec énigme non résolue", () => {
         const player = new Player([], ["no"]);
         const riddle = new Enigma([{ question: "Es-tu là ?", response: "yes" }])
-        const door = new Door(true);
+        const door = new Door(true, undefined, true, false);
 
         player.giveAnswer(riddle.riddles[0], player.keywords[0]);
         player.openDoor(door);
 
-        expect(door.getThroughDoor(door)).toBe(false);
+        expect(door.getThroughDoor()).toBe(false);
     });
 });
 
@@ -141,53 +141,79 @@ describe("Door", () => {
     it("Essayer de résoudre l'énigme deux fois", () => {
         const player = new Player([], ["no", "yes"]);
         const riddle = new Enigma([{ question: "Es-tu là ?", response: "yes" }])
-        const door = new Door(true);
+        const door = new Door(true, undefined, true, false);
 
         player.giveAnswer(riddle.riddles[0], player.keywords[0]);
         player.openDoor(door);
         player.giveAnswer(riddle.riddles[0], player.keywords[1]);
         player.openDoor(door);
-        expect(door.getThroughDoor(door)).toBeTruthy;
+        expect(door.getThroughDoor()).toBeTruthy;
     });
 
     it("Essayer de résoudre l'énigme trois fois donc conséquence", () => {
         const player = new Player([], ["no", "peut-être", "pas sûr"], []);
         const riddle = new Enigma([{ question: "Es-tu là ?", response: "yes" }])
-        const door = new Door(true);
+        const door = new Door(true, undefined, true, false);
 
         player.giveAnswer(riddle.riddles[0], player.keywords[0]);
         player.openDoor(door);
         player.giveAnswer(riddle.riddles[0], player.keywords[1]);
         player.openDoor(door);
-        player.giveAnswer(riddle.riddles[0], player.keywords[3]);
+        player.giveAnswer(riddle.riddles[0], player.keywords[2]);
         player.openDoor(door);
 
-        expect(door.getThroughDoor(door)).toBe(false);
+        expect(door.getThroughDoor()).toBe(false);
         expect(player.curse).toEqual(["maudit"]);
 
 
     });
 });
 
+describe("Alarm", () => {
+    it("Une alarme est inactive au départ", () => {
+        const alarm = new Alarm();
+
+        expect(alarm.isOn).toBe(false);
+    });
+
+    it("Une action permet d'activer l'alarme", () => {
+        const alarm = new Alarm();
+        alarm.activate();
+
+        expect(alarm.isOn).toBe(true);
+    });
+
+    it("Une action permet de désactiver l'alarme", () => {
+        const alarm = new Alarm();
+        alarm.activate();
+        alarm.desactivate();
+
+        expect(alarm.isOn).toBe(false);
+    });
+});
+
 describe("Door", () => {
     it("Essayer de passer une porte sans alarme active", () => {
         const alarm = new Alarm();
-        alarm.desactive;
-        const door = new Door(true);
-        const player = new Player([], []);
-        player.openDoor(door);
-
-        expect(door.getThroughDoor(door)).toBeTruthy();
+        const door = new Door(false, undefined, false, false);
+        expect(door.getThroughDoor()).toBeTruthy();
     });
 
     it("Essayer de passer une porte avec une alarme", () => {
         const alarm = new Alarm();
-        alarm.active;
-        const door = new Door(true);
-        const player = new Player([], []);
-        player.openDoor(door);
+        alarm.activate();
+        const door = new Door(false, undefined, false, true);
+        door.setAlarm(alarm);
 
-        expect(door.getThroughDoor(door)).toBe(false);
+        expect(door.getThroughDoor()).toBe(false);
+    });
+
+    it("Franchir une porte non protégée par une alarme", () => {
+        const alarm = new Alarm();
+        alarm.activate();
+        const door = new Door(false, undefined, false, false);
+
+        expect(door.getThroughDoor()).toBe(true);
     });
 });
 
