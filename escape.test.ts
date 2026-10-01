@@ -217,3 +217,60 @@ describe("Door", () => {
     });
 });
 
+describe("Alarm", () => {
+    it("Un bon code désactive l'alarme", () => {
+        const alarm = new Alarm("1234");
+        alarm.desactivate("1234");
+
+        expect(alarm.isOn).toBe(false);
+    });
+
+    it("Un mauvais code ne désactive pas l'alarme", () => {
+        const alarm = new Alarm("1234");
+        alarm.activate();
+        alarm.desactivate("0000");
+
+        expect(alarm.isOn).toBe(true);
+    });
+});
+
+describe("Player", () => {
+    it("Désactive l'alarme et consomme l'objet", () => {
+        const alarm = new Alarm("1234");
+        alarm.activate();
+        const player = new Player(["alarm-code"]);
+        player.disableAlarm(alarm, "1234");
+
+        expect(alarm.isOn).toBe(false);
+        expect(player.inventory).not.toContain("alarm-code");
+    });
+});
+
+it("Ne désactive pas l'alarme et ne consomme pas l'objet", () => {
+    const alarm = new Alarm("1234");
+    alarm.activate();
+    const player = new Player(["alarm-code"]);
+    player.disableAlarm(alarm, "0000");
+
+    expect(alarm.isOn).toBe(true);
+    expect(player.inventory).toContain("alarm-code");
+});
+
+it("Une porte protégée par l'alarme peut être franchie après désactivation", () => {
+    const alarm = new Alarm("1234");
+    alarm.activate();
+    const player = new Player(["alarm-code"]);
+    const door = new Door(false, undefined, false, true);
+    door.setAlarm(alarm);
+
+    expect(door.getThroughDoor()).toBe(false);
+
+    player.disableAlarm(alarm, "1234");
+
+    expect(door.getThroughDoor()).toBe(true);
+});
+
+
+
+
+

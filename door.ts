@@ -99,6 +99,24 @@ export class Player {
 
         return false;
     }
+
+    disableAlarm(alarm: Alarm, code: string): boolean {
+        const alarmIndex = this.inventory.indexOf("alarm-code");
+
+        if (alarmIndex === -1) {
+            return false;
+        }
+
+        const disabled = alarm.desactivate(code);
+
+        if (!disabled) {
+            return false;
+        }
+
+        this.inventory.splice(alarmIndex, 1);
+        return true;
+    }
+
 }
 
 export class Room {
@@ -121,16 +139,23 @@ export class Enigma {
 
 export class Alarm {
     isOn: boolean;
+    code?: string;
 
-    constructor() {
+    constructor(code?: string) {
         this.isOn = false;
+        this.code = code;
     }
 
     activate(): void {
         this.isOn = true;
     }
 
-    desactivate(): void {
-        this.isOn = false;
+    desactivate(code: string): boolean {
+        if (code === this.code) {
+            this.isOn = false;
+            return true;
+        }
+
+        return false;
     }
 }
