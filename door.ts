@@ -150,7 +150,7 @@ export class Alarm {
         this.isOn = true;
     }
 
-    desactivate(code: string): boolean {
+    desactivate(code?: string): boolean {
         if (code === this.code) {
             this.isOn = false;
             return true;
