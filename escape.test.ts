@@ -38,7 +38,7 @@ describe("Door", () => {
         const player = new Player(["red-key", "torch"]);
         player.openDoor(door);
 
-        expect(door.getThroughDoor()).toBeTruthy;
+        expect(door.getThroughDoor()).toBeTruthy();
         expect(player.inventory).toContain("torch");
     });
 
@@ -147,7 +147,7 @@ describe("Door", () => {
         player.openDoor(door);
         player.giveAnswer(riddle.riddles[0], player.keywords[1]);
         player.openDoor(door);
-        expect(door.getThroughDoor()).toBeTruthy;
+        expect(door.getThroughDoor()).toBeTruthy();
     });
 
     it("Essayer de résoudre l'énigme trois fois donc conséquence", () => {
@@ -269,6 +269,106 @@ it("Une porte protégée par l'alarme peut être franchie après désactivation"
 
     expect(door.getThroughDoor()).toBe(true);
 });
+
+describe("Door : laboratory", () => {
+    it("Aucune condition remplie pour franchir la porte", () => {
+        const alarm = new Alarm("1234");
+        alarm.activate();
+        const door = new Door(true, "lab-key", true, true);
+        door.setAlarm(alarm);
+        const player = new Player([], ["no"]);
+        player.giveAnswer({ question: "Es-tu là ?", response: "yes" }, player.keywords[0]);
+
+        player.openDoor(door);
+
+        expect(door.getThroughDoor()).toBe(false);
+    });
+
+    it("Uniquement la clé", () => {
+        const alarm = new Alarm("1234");
+        alarm.activate();
+        const door = new Door(true, "lab-key", true, true);
+        door.setAlarm(alarm);
+        const player = new Player(["lab-key"]);
+
+        player.openDoor(door);
+
+        expect(door.getThroughDoor()).toBe(false);
+    });
+
+    it("Uniquement l'énigme", () => {
+        const alarm = new Alarm("1234");
+        alarm.activate();
+        const door = new Door(true, "lab-key", true, true);
+        door.setAlarm(alarm);
+        const player = new Player([], ["yes"]);
+        player.giveAnswer({ question: "Es-tu là ?", response: "yes" }, player.keywords[0]);
+
+        player.openDoor(door);
+
+        expect(door.getThroughDoor()).toBe(false);
+    });
+
+    it("Uniquement l'alarme désactivée", () => {
+        const alarm = new Alarm("1234");
+        const door = new Door(true, "lab-key", true, true);
+        door.setAlarm(alarm);
+        const player = new Player([]);
+
+        player.openDoor(door);
+
+        expect(door.getThroughDoor()).toBe(false);
+    });
+
+    it("Clé + énigme", () => {
+        const alarm = new Alarm("1234");
+        alarm.activate();
+        const door = new Door(true, "lab-key", true, true);
+        door.setAlarm(alarm);
+        const player = new Player(["lab-key"], ["yes"]);
+        player.giveAnswer({ question: "Es-tu là ?", response: "yes" }, player.keywords[0]);
+
+        player.openDoor(door);
+
+        expect(door.getThroughDoor()).toBe(false);
+    });
+
+    it("Clé + alarme désactivée", () => {
+        const alarm = new Alarm("1234");
+        const door = new Door(true, "lab-key", true, true);
+        door.setAlarm(alarm);
+        const player = new Player(["lab-key"]);
+
+        player.openDoor(door);
+
+        expect(door.getThroughDoor()).toBe(false);
+    });
+
+    it("Énigme + alarme désactivée", () => {
+        const alarm = new Alarm("1234");
+        const door = new Door(true, "lab-key", true, true);
+        door.setAlarm(alarm);
+        const player = new Player([], ["yes"]);
+        player.giveAnswer({ question: "Es-tu là ?", response: "yes" }, player.keywords[0]);
+
+        player.openDoor(door);
+
+        expect(door.getThroughDoor()).toBe(false);
+    });
+
+    it("Les trois conditions réunies", () => {
+        const alarm = new Alarm("1234");
+        const door = new Door(true, "lab-key", true, true);
+        door.setAlarm(alarm);
+        const player = new Player(["lab-key"], ["yes",]);
+        player.giveAnswer({ question: "Es-tu là ?", response: "yes" }, player.keywords[0]);
+
+        player.openDoor(door);
+
+        expect(door.getThroughDoor()).toBe(true);
+    });
+});
+
 
 
 

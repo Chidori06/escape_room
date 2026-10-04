@@ -52,6 +52,10 @@ export class Player {
             return false;
         }
 
+        if (door.alarmProtected && door.alarm?.isOn) {
+            return false;
+        }
+
         if (door.padlock) {
             const keyIndex = this.inventory.indexOf(door.padlock);
 
